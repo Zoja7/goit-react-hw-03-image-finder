@@ -5,7 +5,9 @@ export default function Searchbar({ onSubmit }) {
   const inputRef = useRef(null);
   const handleSubmit = event => {
     event.preventDefault();
+
     const searchQuery = inputRef.current.value.trim();
+
     onSubmit(searchQuery);
   };
   return (
@@ -20,6 +22,7 @@ export default function Searchbar({ onSubmit }) {
           className="searchFormInput"
           type="text"
           ref={inputRef}
+          name="searchQuery"
           autoComplete="off"
           autoFocus
           placeholder="Search images and photos"

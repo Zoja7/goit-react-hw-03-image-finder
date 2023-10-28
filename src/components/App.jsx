@@ -2,6 +2,9 @@ import { API_KEY, BASE_URL } from './configs/configs';
 import axios from 'axios';
 import { Component } from 'react';
 import Searchbar from './Searchbar/Searchbar';
+import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
+import { StyledApp } from './StyledApp.styled';
 
 // {
 //   "total": 35317,
@@ -46,6 +49,9 @@ export class App extends Component {
 
     isLoading: false,
     error: null,
+
+    currentPage: 1,
+    totalPages: 1,
   };
 
   fetchImages = async (query, page) => {
@@ -62,9 +68,23 @@ export class App extends Component {
       const { data } = await axios(BASE_URL, { params });
       this.setState({
         images: data.hits,
+        currentPage: page,
+        totalPages: Math.ceil(data.totalHits / 12),
       });
+      const { images, searchQuery } = this.state;
+      if (!searchQuery) {
+        alert('Please enter word for search!!!');
+        return;
+      }
+      if (images.length === 0) {
+        alert(
+          'Sorry, there are no images matching your search query. Please try again!'
+        );
+        return;
+      }
     } catch (error) {
       this.setState({ error: error.message });
+    } finally {
     }
   };
 
@@ -75,32 +95,38 @@ export class App extends Component {
   handelSubmitForm = searchQuery => {
     this.setState({ searchQuery });
     this.fetchImages(searchQuery, 1);
+
     if (!searchQuery) {
       this.setState(this.state.images);
     }
   };
+
+  loadMore = () => {
+    const { searchQuery, currentPage, totalPages } = this.state;
+    if (currentPage < totalPages) {
+      this.fetchImages(searchQuery, currentPage + 1);
+    }
+  };
+
+  ShownLoadMoreButton() {
+    const { currentPage, totalPages, images, searchQuery } = this.state;
+    return (
+      searchQuery !== null &&
+      currentPage < totalPages &&
+      images &&
+      images.length > 0
+    );
+  }
   render() {
     const { images, searchQuery } = this.state;
     return (
-      <>
+      <StyledApp>
         <Searchbar onSubmit={this.handelSubmitForm} />
-        <div>
-          <ul>
-            {searchQuery !== null &&
-              images.map(image => {
-                return (
-                  <li key={image.id}>
-                    <img
-                      src={image.webformatURL}
-                      alt={image.tags}
-                      style={{ width: '100px', height: 'auto' }}
-                    />
-                  </li>
-                );
-              })}
-          </ul>
-        </div>
-      </>
+        {searchQuery !== null && (
+          <ImageGallery images={images} searchQuery={searchQuery} />
+        )}
+        {this.ShownLoadMoreButton() && <Button onClick={this.loadMore} />}
+      </StyledApp>
     );
   }
 }

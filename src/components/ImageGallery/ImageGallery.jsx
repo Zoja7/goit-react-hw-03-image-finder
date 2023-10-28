@@ -1,4 +1,24 @@
 import css from './ImageGallery.module.css';
-export default function ImagesGallery() {
-  return <ul className={css.imageGalley} alt="gallery of images"></ul>;
+import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
+export default function ImageGallery({ images }) {
+  return (
+    <ul className={css.imageGallery} alt="gallery of images">
+      {' '}
+      <ImageGalleryItem images={images} />
+    </ul>
+  );
 }
+// <ul>
+//   {searchQuery !== null &&
+//     images.map(image => {
+//       return (
+//         <li key={image.id}>
+//           <img
+//             src={image.webformatURL}
+//             alt={image.tags}
+//             style={{ width: '100px', height: 'auto' }}
+//           />
+//         </li>
+//       );
+//     })}
+// </ul>;
