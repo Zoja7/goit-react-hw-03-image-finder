@@ -1,6 +1,7 @@
 import { API_KEY, BASE_URL } from './configs/configs';
 import axios from 'axios';
 import { Component } from 'react';
+import Searchbar from './Searchbar/Searchbar';
 
 // {
 //   "total": 35317,
@@ -41,6 +42,7 @@ export class App extends Component {
   state = {
     id: null,
     images: null,
+    searchQuery: null,
 
     isLoading: false,
     error: null,
@@ -58,7 +60,6 @@ export class App extends Component {
     };
     try {
       const { data } = await axios(BASE_URL, { params });
-      // console.log('Received data:', data);
       this.setState({
         images: data.hits,
       });
@@ -68,27 +69,38 @@ export class App extends Component {
   };
 
   componentDidMount() {
-    this.fetchImages(); // Викликати з власними параметрами запиту
+    this.fetchImages();
   }
+
+  handelSubmitForm = searchQuery => {
+    this.setState({ searchQuery });
+    this.fetchImages(searchQuery, 1);
+    if (!searchQuery) {
+      this.setState(this.state.images);
+    }
+  };
   render() {
-    const { images } = this.state;
+    const { images, searchQuery } = this.state;
     return (
-      <div>
-        <ul>
-          {images !== null &&
-            images.map(image => {
-              return (
-                <li key={image.id}>
-                  <img
-                    src={image.webformatURL}
-                    alt={image.tags}
-                    style={{ width: '100px', height: 'auto' }}
-                  />
-                </li>
-              );
-            })}
-        </ul>
-      </div>
+      <>
+        <Searchbar onSubmit={this.handelSubmitForm} />
+        <div>
+          <ul>
+            {searchQuery !== null &&
+              images.map(image => {
+                return (
+                  <li key={image.id}>
+                    <img
+                      src={image.webformatURL}
+                      alt={image.tags}
+                      style={{ width: '100px', height: 'auto' }}
+                    />
+                  </li>
+                );
+              })}
+          </ul>
+        </div>
+      </>
     );
   }
 }
