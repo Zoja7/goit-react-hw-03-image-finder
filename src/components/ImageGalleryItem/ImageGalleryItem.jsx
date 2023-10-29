@@ -1,5 +1,5 @@
 import css from './imageGalleryItem.module.css';
-export default function ImageGalleryItem({ images }) {
+export default function ImageGalleryItem({ images, openModal }) {
   return images.map(image => {
     if (!images) {
       return null; // Повернути пустий результат, якщо images === null
@@ -10,6 +10,7 @@ export default function ImageGalleryItem({ images }) {
           className={css.imageGalleryItemImage}
           src={image.webformatURL}
           alt={image.tags}
+          onClick={() => openModal(image.largeImageURL)}
         />
       </li>
     );

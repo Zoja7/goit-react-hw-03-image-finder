@@ -1,10 +1,12 @@
 import { API_KEY, BASE_URL } from './configs/configs';
 import axios from 'axios';
 import { Component } from 'react';
+import { StyledApp } from './StyledApp.styled';
+import Loader from './Loader/Loader';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
-import { StyledApp } from './StyledApp.styled';
+import Modal from './Modal/Modal';
 
 // {
 //   "total": 35317,
@@ -44,7 +46,8 @@ import { StyledApp } from './StyledApp.styled';
 export class App extends Component {
   state = {
     id: null,
-    images: null,
+    images: [],
+    modalImage: null,
     searchQuery: null,
 
     isLoading: false,
@@ -52,6 +55,8 @@ export class App extends Component {
 
     currentPage: 1,
     totalPages: 1,
+
+    isOpenModal: false,
   };
 
   fetchImages = async (query, page) => {
@@ -64,6 +69,8 @@ export class App extends Component {
       page,
       per_page: 12,
     };
+
+    this.setState({ isLoading: true });
     try {
       const { data } = await axios(BASE_URL, { params });
       this.setState({
@@ -71,12 +78,14 @@ export class App extends Component {
         currentPage: page,
         totalPages: Math.ceil(data.totalHits / 12),
       });
-      const { images, searchQuery } = this.state;
+
+      const { searchQuery } = this.state;
       if (!searchQuery) {
         alert('Please enter word for search!!!');
         return;
       }
-      if (images.length === 0) {
+      const { images } = this.state;
+      if (!images.length > 0) {
         alert(
           'Sorry, there are no images matching your search query. Please try again!'
         );
@@ -85,6 +94,7 @@ export class App extends Component {
     } catch (error) {
       this.setState({ error: error.message });
     } finally {
+      this.setState({ isLoading: false });
     }
   };
 
@@ -93,11 +103,11 @@ export class App extends Component {
   }
 
   handelSubmitForm = searchQuery => {
-    this.setState({ searchQuery });
-    this.fetchImages(searchQuery, 1);
-
     if (!searchQuery) {
-      this.setState(this.state.images);
+      this.setState({ error: 'Please enter a word for the search!!!' });
+    } else {
+      this.setState({ searchQuery, error: null });
+      this.fetchImages(searchQuery, 1);
     }
   };
 
@@ -108,24 +118,51 @@ export class App extends Component {
     }
   };
 
+  openModal = largeImageURL => {
+    this.setState({
+      isOpenModal: true,
+      modalImage: largeImageURL,
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      isOpenModal: false,
+      images: null,
+    });
+  };
+
   ShownLoadMoreButton() {
     const { currentPage, totalPages, images, searchQuery } = this.state;
     return (
       searchQuery !== null &&
       currentPage < totalPages &&
-      images &&
+      images !== null &&
       images.length > 0
     );
   }
   render() {
-    const { images, searchQuery } = this.state;
+    const { images, searchQuery, modalImage } = this.state;
     return (
       <StyledApp>
         <Searchbar onSubmit={this.handelSubmitForm} />
-        {searchQuery !== null && (
-          <ImageGallery images={images} searchQuery={searchQuery} />
+        {this.state.error !== null && (
+          <p className="errorBage">
+            Oops, some error occured... Error message: {this.state.error}
+          </p>
+        )}
+        {this.state.isLoading && <Loader />}
+        {searchQuery !== null && images && images.length > 0 && (
+          <ImageGallery
+            images={images}
+            searchQuery={searchQuery}
+            openModal={this.openModal}
+          />
         )}
         {this.ShownLoadMoreButton() && <Button onClick={this.loadMore} />}
+        {this.state.isOpenModal && (
+          <Modal largeImage={modalImage} closeModal={this.closeModal} />
+        )}
       </StyledApp>
     );
   }

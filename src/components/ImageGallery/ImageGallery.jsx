@@ -1,10 +1,10 @@
 import css from './ImageGallery.module.css';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
-export default function ImageGallery({ images }) {
+export default function ImageGallery({ images, openModal }) {
   return (
     <ul className={css.imageGallery} alt="gallery of images">
       {' '}
-      <ImageGalleryItem images={images} />
+      <ImageGalleryItem images={images} openModal={openModal} />
     </ul>
   );
 }
