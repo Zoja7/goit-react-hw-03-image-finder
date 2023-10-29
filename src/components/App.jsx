@@ -46,7 +46,7 @@ import Modal from './Modal/Modal';
 export class App extends Component {
   state = {
     id: null,
-    images: [],
+    images: null,
     modalImage: null,
     searchQuery: null,
 
@@ -85,7 +85,7 @@ export class App extends Component {
         return;
       }
       const { images } = this.state;
-      if (!images.length > 0) {
+      if (images && !images.length > 0) {
         alert(
           'Sorry, there are no images matching your search query. Please try again!'
         );

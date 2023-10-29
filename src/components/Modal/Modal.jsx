@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import css from './Modal.module.css';
 export default class Modal extends Component {
-  handleOverayClick = event => {
+  handleOverlayClick = event => {
     if (event.target === event.currentTarget) {
       this.props.closeModal();
     }
@@ -25,12 +25,12 @@ export default class Modal extends Component {
 
   render() {
     return (
-      <div className={css.overlay}>
+      <div className={css.overlay} onClick={this.handleOverlayClick}>
         <div className={css.modal} key={this.props.id}>
           <img
             src={this.props.largeImage}
             alt={this.props.tags}
-            style={{ width: '1000px', height: '780px' }}
+            style={{ width: '700px', height: '580px' }}
           />
         </div>
       </div>

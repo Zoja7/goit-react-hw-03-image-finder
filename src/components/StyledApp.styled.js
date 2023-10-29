@@ -11,5 +11,6 @@ export const StyledApp = styled.div`
     background-color: orange;
     margin-bottom: 20px;
     font-size: 20px;
+    margin: 0 auto;
   }
 `;
