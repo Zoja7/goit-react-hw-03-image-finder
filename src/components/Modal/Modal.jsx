@@ -28,6 +28,7 @@ export default class Modal extends Component {
       <div className={css.overlay} onClick={this.handleOverlayClick}>
         <div className={css.modal} key={this.props.id}>
           <img
+            className={css.image}
             src={this.props.largeImage}
             alt={this.props.tags}
             style={{ width: '700px', height: '500px' }}
