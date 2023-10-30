@@ -30,7 +30,7 @@ export default class Modal extends Component {
           <img
             src={this.props.largeImage}
             alt={this.props.tags}
-            style={{ width: '700px', height: '580px' }}
+            style={{ width: '700px', height: '500px' }}
           />
         </div>
       </div>

@@ -2,7 +2,7 @@ import css from './imageGalleryItem.module.css';
 export default function ImageGalleryItem({ images, openModal }) {
   return images.map(image => {
     if (!images) {
-      return null; // Повернути пустий результат, якщо images === null
+      return null;
     }
     return (
       <li className={css.imageGalleryItem} key={image.id}>
